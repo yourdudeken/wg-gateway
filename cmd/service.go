@@ -54,7 +54,33 @@ var addSvcCmd = &cobra.Command{
 	},
 }
 
-// ... rest of commands ...
+var updateSvcCmd = &cobra.Command{
+	Use:   "update [domain] [new-port]",
+	Short: "Update an existing service's port",
+	Args:  cobra.ExactArgs(2),
+	Run: func(cmd *cobra.Command, args []string) {
+		domain := args[0]
+		newPort, _ := strconv.Atoi(args[1])
+
+		cfg, err := config.LoadConfig("config.yaml")
+		if err != nil {
+			fmt.Printf("Error loading config: %v\n", err)
+			return
+		}
+
+		if err := service.Edit(cfg, domain, newPort); err != nil {
+			fmt.Printf("Error: %v\n", err)
+			return
+		}
+
+		if err := config.SaveConfig("config.yaml", cfg); err != nil {
+			fmt.Printf("Error saving config: %v\n", err)
+			return
+		}
+
+		fmt.Printf("Service %s updated to port %d.\n", domain, newPort)
+	},
+}
 
 var removeSvcCmd = &cobra.Command{
 	Use:   "remove [domain]",
@@ -108,6 +134,7 @@ var listSvcCmd = &cobra.Command{
 func init() {
 	addSvcCmd.Flags().StringVar(&targetPeer, "peer", "home", "Target peer name for the service")
 	serviceCmd.AddCommand(addSvcCmd)
+	serviceCmd.AddCommand(updateSvcCmd)
 	serviceCmd.AddCommand(removeSvcCmd)
 	serviceCmd.AddCommand(listSvcCmd)
 	rootCmd.AddCommand(serviceCmd)

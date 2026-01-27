@@ -1,91 +1,105 @@
-# WireGuard VPS-to-Home Gateway Tool (`wg-gateway`)
+# W-G Gateway
 
-Automate exposing your home server behind CGNAT/4G through a VPS with a public IP.
+ __      __  ________        ________         __                                           
+/  \    /  |/  _____/       /  _____/  ____ _/  |_  ____ __  _  __ _____  ___.__.          
+\   \/\/   /   \  ___      /   \  ____/ __ \\   __\/ __ \\ \/ \/ // __ \<   |  |          
+ \        /    \    \     \    \_\  \  ___/ |  | \  ___/ \     /\  ___/ \___  |          
+  \__/\  / \______  /      \______  /\___  >|__|  \___  > \/\_/  \___  >/ ____|          
+       \/         \/               \/     \/           \/             \/ \/               
 
-## Features
-- **WireGuard Automation**: Automatic key generation and config management.
-- **Docker-Native**: Runs everything in Docker for no host pollution.
-- **Traefik Integration**: Automatic HTTPS and host-based routing.
-- **Persistent Connection**: Built-in keepalives for stable 4G/mobile connections.
+**WireGuard VPS-to-Home Gateway Tool**
 
-## Quick Start
+`wg-gateway` is a production-grade infrastructure tool designed to securely expose home servers (behind CGNAT, 4G, or dynamic IPs) to the public internet. It automates the orchestration of WireGuard tunnels and Traefik reverse proxies using a strictly **command-driven workflow**.
 
-1. **Initialize the project**
-   ```bash
-   # Build the tool first
-   go build -o wg-gateway main.go
+## Core Philosophy: Zero Manual Configuration
+- **No SSH Required**: The tool manages the VPS via automated orchestration.
+- **No File Editing**: All configurations are handled via the CLI.
+- **Hub-and-Spoke**: One VPS can securely tunnel to multiple distributed home server nodes.
+- **Security First**: Automated hardening with Fail2Ban, UFW, and custom SSH identity support.
 
-   # Initialize with VPS details
-   ./wg-gateway init --ip 1.2.3.4 --user root --email admin@example.com
-   ```
+## Feature highlights
+- **Automated VPS Provisioning**: One command to transform a fresh Ubuntu VPS into a secured gateway.
+- **Multi-Node Support**: Connect multiple home servers (peers) to a single VPS hub.
+- **Observability Suite**: Real-time health checks, handshakes, and container log streaming.
+- **Docker Native**: Runs entirely in containers for isolation and easy cleanup.
+- **Auto-HTTPS**: Integrated Let's Encrypt support via Traefik.
 
-2. **Add your services**
-   ```bash
-   ./wg-gateway service add myapp.com 8080
-   ```
+---
 
-3. **Deploy to VPS (Automated)**
-   *Requires SSH key access to your VPS.*
-   ```bash
-   # Use --bootstrap to install Docker, WireGuard, and setup Firewall on a new VPS
-   ./wg-gateway deploy --bootstrap
-   ```
-   This will automatically:
-   - **Bootstrap**: Update system, install Docker/WireGuard, and configure UFW Firewall.
-   - **Provision**: Generate configurations and upload them to your VPS.
-   - **Launch**: Start WireGuard and Traefik containers on the remote host.
+## 🚀 Quick Start (5-Step Workflow)
 
-4. **Connect your Home Server**
-   ```bash
-   cd deploy/home
-   # Add your services to the generated docker-compose.yaml
-   docker compose up -d
-   ```
+### 1. Build & Initialize
+Build the CLI tool and initialize your project with VPS details.
+```bash
+go build -o wg-gateway main.go
 
-## Peer Management (Multi-Node)
-The tool supports a **Hub-and-Spoke** topology, allowing one VPS to serve multiple home servers.
-- `peer add [name]`: Add a new home server peer.
-- `peer list`: View all configured peers/branches.
+./wg-gateway init --ip 1.2.3.4 --user root --key ~/.ssh/id_rsa --email admin@example.com
+```
 
-Example:
+### 2. Manage Peers (Nodes)
+Add your home server nodes. The first peer 'home' is created by default.
 ```bash
 ./wg-gateway peer add warehouse-lab
-./wg-gateway service add lab-api.com 8080 --peer warehouse-lab
 ```
 
-## Service Management
-Manage your home services effortlessly via CLI:
-- `add [domain] [port] [--peer name]`: Add a new routing rule (defaults to 'home').
-- `remove [domain]`: Delete an existing service.
-- `list`: View all active services and their associated peers.
-
-Example:
+### 3. Add Services
+Route public domains to specific ports on your peers.
 ```bash
-./wg-gateway service add api.example.com 3000
-./wg-gateway service remove old.example.com
+./wg-gateway service add myapp.com 8080 --peer home
+./wg-gateway service add inventory.net 9000 --peer warehouse-lab
 ```
 
-## Observability
-Keep an eye on your gateway's health with built-in monitoring:
-- `check`: Connectivity test for VPS and **all** connected peers.
-- `logs vps traefik`: Streams logs from the Traefik proxy on your VPS.
-- `logs home`: Views logs for your 'home' peer WireGuard container.
+### 4. Deploy to VPS
+Bootstrap the remote server (first time only) and sync configurations.
+```bash
+./wg-gateway deploy --bootstrap
+```
 
-## Commands
-- `init`: Initialize project with defaults or flags.
-- `peer`: Manage home server peers (add, list).
-- `service`: Manage home services (add, remove, list).
-- `deploy`: One-click deployment to VPS (with optional `--bootstrap`).
-- `config`: Update specific configuration keys.
-- `status`: Health check and configuration overview.
-- `check`: Perform a live connectivity and tunnel health check.
-- `logs [vps|home]`: View or follow container logs.
-- `generate`: Manually render configuration files.
-- `rotate-keys`: Securely cycle WireGuard keys.
-- `destroy`: Clean up 'deploy' directory.
+### 5. Start the Tunnel
+Launch the secure tunnel on your local machine.
+```bash
+./wg-gateway up home
+```
 
-## Contributing
-Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on how to get involved.
+---
 
-## License
+## 🛠 Command Reference
+
+### Infrastructure Lifecycle
+- `init`: Create a new project configuration.
+- `deploy [--bootstrap]`: Provision VPS, install Docker/WireGuard, and upload configs.
+- `generate`: Manually render the deployment Docker and WireGuard files.
+- `destroy`: Wipe the local `deploy/` directory.
+
+### Node & Service Management
+- `peer add [name]`: Register a new home server node.
+- `peer list`: View all configured nodes and their tunnel IPs.
+- `service add [domain] [port]`: Map a domain to a local port.
+- `service update [domain] [port]`: Change the target port for a domain.
+- `service list`: View all active routing rules.
+
+### Local Execution
+- `up [peer]`: Start the WireGuard tunnel for a specific peer.
+- `down [peer]`: Stop the tunnel for a specific peer.
+
+### Observability & Maintenance
+- `status`: Overview of the project, including a production-readiness audit.
+- `check`: Live connectivity test (pings all peers from the VPS).
+- `logs [vps|home] [service]`: Stream real-time logs from remote or local containers.
+- `config [key] [value]`: Update any setting (e.g., `vps.ip`, `proxy.email`) via CLI.
+- `rotate-keys`: Regenerate all WireGuard keypairs for the hub and spokes.
+
+---
+
+## 🛡 Security
+`wg-gateway` implements several hardening measures automatically:
+- **Fail2Ban**: Installed and configured during bootstrap to block brute-force attacks.
+- **UFW Firewall**: Defaults to "deny all" with explicit allows for SSH (22), WireGuard (51820), and Web (80/443).
+- **Custom SSH Keys**: Supports specific identity files for deployment.
+- **No Emojis**: Clean, professional console output suitable for enterprise logs.
+
+## 🤝 Contributing
+Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
+
+## 📄 License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
