@@ -1,11 +1,13 @@
 # W-G Gateway
 
+```
  __      __  ________        ________         __                                           
 /  \    /  |/  _____/       /  _____/  ____ _/  |_  ____ __  _  __ _____  ___.__.          
 \   \/\/   /   \  ___      /   \  ____/ __ \\   __\/ __ \\ \/ \/ // __ \<   |  |          
  \        /    \    \     \    \_\  \  ___/ |  | \  ___/ \     /\  ___/ \___  |          
   \__/\  / \______  /      \______  /\___  >|__|  \___  > \/\_/  \___  >/ ____|          
        \/         \/               \/     \/           \/             \/ \/               
+```
 
 **WireGuard VPS-to-Home Gateway Tool**
 
@@ -26,7 +28,7 @@
 
 ---
 
-## 🚀 Quick Start (5-Step Workflow)
+## Quick Start (5-Step Workflow)
 
 ### 1. Build & Initialize
 Build the CLI tool and initialize your project with VPS details.
@@ -63,7 +65,7 @@ Launch the secure tunnel on your local machine.
 
 ---
 
-## 🛠 Command Reference
+## Command Reference
 
 ### Infrastructure Lifecycle
 - `init`: Create a new project configuration.
@@ -91,15 +93,15 @@ Launch the secure tunnel on your local machine.
 
 ---
 
-## 🛡 Security
+## Security
 `wg-gateway` implements several hardening measures automatically:
 - **Fail2Ban**: Installed and configured during bootstrap to block brute-force attacks.
 - **UFW Firewall**: Defaults to "deny all" with explicit allows for SSH (22), WireGuard (51820), and Web (80/443).
 - **Custom SSH Keys**: Supports specific identity files for deployment.
 - **No Emojis**: Clean, professional console output suitable for enterprise logs.
 
-## 🤝 Contributing
+## Contributing
 Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
 
-## 📄 License
+## License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
