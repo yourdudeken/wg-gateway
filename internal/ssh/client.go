@@ -7,17 +7,24 @@ import (
 )
 
 type Client struct {
-	User string
-	Host string
+	User    string
+	Host    string
+	KeyPath string
 }
 
-func NewClient(user, host string) *Client {
-	return &Client{User: user, Host: host}
+func NewClient(user, host, keyPath string) *Client {
+	return &Client{User: user, Host: host, KeyPath: keyPath}
 }
 
 func (c *Client) Run(command string) error {
 	dest := fmt.Sprintf("%s@%s", c.User, c.Host)
-	cmd := exec.Command("ssh", "-o", "BatchMode=yes", "-o", "ConnectTimeout=10", dest, command)
+	args := []string{"-o", "BatchMode=yes", "-o", "ConnectTimeout=10"}
+	if c.KeyPath != "" {
+		args = append(args, "-i", c.KeyPath)
+	}
+	args = append(args, dest, command)
+
+	cmd := exec.Command("ssh", args...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	return cmd.Run()
@@ -25,7 +32,13 @@ func (c *Client) Run(command string) error {
 
 func (c *Client) Copy(src, dst string) error {
 	dest := fmt.Sprintf("%s@%s:%s", c.User, c.Host, dst)
-	cmd := exec.Command("scp", "-o", "BatchMode=yes", "-r", src, dest)
+	args := []string{"-o", "BatchMode=yes", "-r"}
+	if c.KeyPath != "" {
+		args = append(args, "-i", c.KeyPath)
+	}
+	args = append(args, src, dest)
+
+	cmd := exec.Command("scp", args...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	return cmd.Run()

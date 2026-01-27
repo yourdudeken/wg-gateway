@@ -11,6 +11,7 @@ type Config struct {
 type VPSConfig struct {
 	IP         string `yaml:"ip"`
 	SSHUser    string `yaml:"ssh_user"`
+	SSHKey     string `yaml:"ssh_key"`
 	WGIp       string `yaml:"wg_ip"`
 	WGPort     int    `yaml:"wg_port"`
 	PrivateKey string `yaml:"private_key"`

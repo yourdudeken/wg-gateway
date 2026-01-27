@@ -54,12 +54,20 @@ Example:
 ./wg-gateway service remove old.example.com
 ```
 
+## Observability
+Keep an eye on your gateway's health with built-in monitoring:
+- `check`: Tests SSH, Docker, WireGuard interfaces, and pings the home server from the VPS.
+- `logs vps traefik`: Streams logs from the Traefik proxy on your VPS.
+- `logs home`: Views logs for your home-side WireGuard container.
+
 ## Commands
 - `init`: Initialize project with defaults or flags.
 - `service`: Manage home services (add, remove, list).
 - `deploy`: One-click deployment to VPS (with optional `--bootstrap`).
 - `config`: Update specific configuration keys.
 - `status`: Health check and configuration overview.
+- `check`: Perform a live connectivity and tunnel health check.
+- `logs [vps|home]`: View or follow container logs.
 - `generate`: Manually render configuration files.
 - `rotate-keys`: Securely cycle WireGuard keys.
 - `destroy`: Clean up 'deploy' directory.

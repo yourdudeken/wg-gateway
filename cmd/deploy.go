@@ -26,7 +26,7 @@ var deployCmd = &cobra.Command{
 			return
 		}
 
-		client := ssh.NewClient(cfg.VPS.SSHUser, cfg.VPS.IP)
+		client := ssh.NewClient(cfg.VPS.SSHUser, cfg.VPS.IP, cfg.VPS.SSHKey)
 
 		// 1. Optional Provisioning
 		if bootstrapFlag {

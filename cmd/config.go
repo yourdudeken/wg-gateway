@@ -27,6 +27,8 @@ var configCmd = &cobra.Command{
 			cfg.VPS.IP = value
 		case "vps.user":
 			cfg.VPS.SSHUser = value
+		case "vps.key":
+			cfg.VPS.SSHKey = value
 		case "proxy.email":
 			cfg.Proxy.Email = value
 		case "project":

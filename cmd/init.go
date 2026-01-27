@@ -12,6 +12,7 @@ import (
 var (
 	vpsIP      string
 	sshUser    string
+	sshKey     string
 	proxyEmail string
 )
 
@@ -32,6 +33,9 @@ var initCmd = &cobra.Command{
 		}
 		if sshUser != "" {
 			cfg.VPS.SSHUser = sshUser
+		}
+		if sshKey != "" {
+			cfg.VPS.SSHKey = sshKey
 		}
 		if proxyEmail != "" {
 			cfg.Proxy.Email = proxyEmail
@@ -69,6 +73,7 @@ var initCmd = &cobra.Command{
 func init() {
 	initCmd.Flags().StringVar(&vpsIP, "ip", "", "VPS Public IP address")
 	initCmd.Flags().StringVar(&sshUser, "user", "root", "VPS SSH user")
+	initCmd.Flags().StringVar(&sshKey, "key", "", "Path to SSH private key")
 	initCmd.Flags().StringVar(&proxyEmail, "email", "", "Email for Let's Encrypt certificates")
 	rootCmd.AddCommand(initCmd)
 }
