@@ -2,33 +2,72 @@
 
 All notable changes to the `wg-gateway` project will be documented in this file.
 
+## [2.1.0] - 2026-01-27
+### Added
+- **Web UI Dashboard**: Modern, dark-themed web interface for visual gateway management.
+    - Real-time status monitoring with live statistics
+    - Visual peer and service management
+    - Configuration editor with form validation
+    - Responsive design for desktop and mobile
+    - RESTful API backend with embedded static files
+- **Enhanced CLI Commands**:
+    - `web`: Launch the web-based dashboard interface
+    - `up [peer]`: Start local peer tunnel via Docker Compose
+    - `down [peer]`: Stop local peer tunnel
+    - `service update`: Modify existing service port mappings
+- **Improved Configuration Management**:
+    - Dot-notation support in `config` command (e.g., `vps.ip`, `proxy.email`)
+    - Enhanced validation and error messages
+
+### Changed
+- Removed all emojis from codebase for enterprise compatibility
+- Updated README with comprehensive command reference and web UI documentation
+- Improved CLI help text and command descriptions
+
 ## [2.0.0] - 2026-01-27
 ### Added
 - **Multi-Node Support**: Refactored architecture to support Hub-and-Spoke topology (one VPS, many home servers).
 - **Command-Driven UI**: Complete CLI lifecycle management. Users no longer need to edit files or SSH manually.
-- **Local Tunnel Management**: Added `up` and `down` commands to manage Docker Compose lifecycle for peers.
-- **Service Management**: Added `update` command to modify existing service mappings.
+- **Peer Management**: 
+    - New `peer` command group for managing multiple home servers
+    - Automatic IP assignment for new peers
+    - Key generation and rotation for all peers
+- **Service Management**: 
+    - `service add` with `--peer` flag for multi-node routing
+    - `service remove` for cleanup
+    - `service list` with peer association display
 - **Security Hardening**: 
-    - Automated **Fail2Ban** installation and configuration on VPS.
-    - Custom SSH identity file support via `--key` and `config vps.key`.
-    - UFW firewall automation.
-- **Observability**:
-    - New `check` command for live end-to-end connectivity auditing.
-    - New `logs` command for streaming remote (VPS) and local (Home) container logs.
-- **CLI Aesthetics**: Added a professional ASCII banner and removed emojis from output for enterprise compatibility.
+    - Automated **Fail2Ban** installation and configuration on VPS
+    - Custom SSH identity file support via `--key` and `config vps.key`
+    - UFW firewall automation with explicit port rules
+- **Observability Suite**:
+    - `check` command for live end-to-end connectivity auditing
+    - `logs` command for streaming remote (VPS) and local (Home) container logs
+    - Enhanced `status` command with production-readiness audit
+- **CLI Aesthetics**: 
+    - Professional ASCII banner
+    - Clean, emoji-free output for enterprise logs
 
 ### Changed
-- Refactored `config.yaml` to support a `Peers` slice instead of a single `Home` object.
-- Improved `deploy` command with better error reporting and automated SCP/SSH orchestration.
-- Updated Traefik templates to dynamically resolve peer IPs based on service mapping.
+- Refactored `config.yaml` to support a `Peers` slice instead of a single `Home` object
+- Updated all WireGuard and Traefik templates for multi-peer support
+- Improved `deploy` command with better error reporting and automated SCP/SSH orchestration
+- Enhanced `generate` command to create peer-specific deployment folders
+
+### Breaking Changes
+- Configuration file structure changed from `Home` to `Peers` array
+- Service definitions now require `peer_name` field
+- Deployment files now generated in `deploy/peers/[name]` instead of `deploy/home`
 
 ## [1.0.0] - 2026-01-25
 ### Added
-- Initial release of the `wg-gateway` CLI.
-- Basic WireGuard point-to-point tunnel orchestration.
-- Support for Traefik reverse proxy with automated Let's Encrypt.
-- `init`, `add-service`, `generate`, and `deploy` base commands.
-- Support for Docker-based deployments on both VPS and Home server.
+- Initial release of the `wg-gateway` CLI
+- Basic WireGuard point-to-point tunnel orchestration
+- Support for Traefik reverse proxy with automated Let's Encrypt
+- Core commands: `init`, `generate`, `deploy`, `status`
+- Docker-based deployments for both VPS and Home server
+- Automated WireGuard key generation
+- Basic service routing configuration
 
 ---
 *Note: This project follows Semantic Versioning.*
