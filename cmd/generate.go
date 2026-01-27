@@ -16,18 +16,19 @@ var generateCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		cfg, err := config.LoadConfig("config.yaml")
 		if err != nil {
-			fmt.Printf("Error loading config: %v\n", err)
+			fmt.Printf("❌ Error loading config: %v\n", err)
 			return
 		}
+
+		if err := cfg.Validate(); err != nil {
+			fmt.Printf("⚠️  Config Validation Warning: %v\n", err)
+		}
+
 		generateAction(cfg)
 	},
 }
 
 func generateAction(cfg *config.Config) {
-	if cfg.VPS.IP == "" {
-		fmt.Println("Warning: vps.ip is not set in config.yaml. Please set it before deploying.")
-	}
-
 	// Cleanup old deploy dir
 	os.RemoveAll("deploy")
 
@@ -37,32 +38,46 @@ func generateAction(cfg *config.Config) {
 	os.MkdirAll(filepath.Join(vpsDir, "traefik_dynamic"), 0755)
 	os.MkdirAll(filepath.Join(vpsDir, "letsencrypt"), 0755)
 
-	renderAndSave(vpsDir, "docker-compose.vps.yaml.tmpl", "docker-compose.yaml", cfg)
-	renderAndSave(filepath.Join(vpsDir, "wireguard"), "wg0-server.conf.tmpl", "wg0.conf", cfg)
-	renderAndSave(filepath.Join(vpsDir, "traefik_dynamic"), "traefik_dynamic.yaml.tmpl", "dynamic.yaml", cfg)
+	if err := renderAndSave(vpsDir, "docker-compose.vps.yaml.tmpl", "docker-compose.yaml", cfg); err != nil {
+		fmt.Printf("❌ Error: %v\n", err)
+		return
+	}
+	if err := renderAndSave(filepath.Join(vpsDir, "wireguard"), "wg0-server.conf.tmpl", "wg0.conf", cfg); err != nil {
+		fmt.Printf("❌ Error: %v\n", err)
+		return
+	}
+	if err := renderAndSave(filepath.Join(vpsDir, "traefik_dynamic"), "traefik_dynamic.yaml.tmpl", "dynamic.yaml", cfg); err != nil {
+		fmt.Printf("❌ Error: %v\n", err)
+		return
+	}
 
 	// Home Generation
 	homeDir := "deploy/home"
 	os.MkdirAll(filepath.Join(homeDir, "wireguard"), 0755)
 
-	renderAndSave(homeDir, "docker-compose.home.yaml.tmpl", "docker-compose.yaml", cfg)
-	renderAndSave(filepath.Join(homeDir, "wireguard"), "wg0-client.conf.tmpl", "wg0.conf", cfg)
+	if err := renderAndSave(homeDir, "docker-compose.home.yaml.tmpl", "docker-compose.yaml", cfg); err != nil {
+		fmt.Printf("❌ Error: %v\n", err)
+		return
+	}
+	if err := renderAndSave(filepath.Join(homeDir, "wireguard"), "wg0-client.conf.tmpl", "wg0.conf", cfg); err != nil {
+		fmt.Printf("❌ Error: %v\n", err)
+		return
+	}
 
-	fmt.Println("Success! Deployment files generated in 'deploy/'")
+	fmt.Println("✨ Success! Deployment files generated in 'deploy/'")
 }
 
-func renderAndSave(dir, tmplName, fileName string, cfg *config.Config) {
+func renderAndSave(dir, tmplName, fileName string, cfg *config.Config) error {
 	data, err := templates.Render(tmplName, cfg)
 	if err != nil {
-		fmt.Printf("Error rendering %s: %v\n", tmplName, err)
-		return
+		return fmt.Errorf("rendering %s: %w", tmplName, err)
 	}
 
 	err = os.WriteFile(filepath.Join(dir, fileName), data, 0644)
 	if err != nil {
-		fmt.Printf("Error saving %s: %v\n", fileName, err)
-		return
+		return fmt.Errorf("saving %s: %w", fileName, err)
 	}
+	return nil
 }
 
 func init() {

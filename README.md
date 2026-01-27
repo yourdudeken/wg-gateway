@@ -27,12 +27,13 @@ Automate exposing your home server behind CGNAT/4G through a VPS with a public I
 3. **Deploy to VPS (Automated)**
    *Requires SSH key access to your VPS.*
    ```bash
-   ./wg-gateway deploy
+   # Use --bootstrap to install Docker, WireGuard, and setup Firewall on a new VPS
+   ./wg-gateway deploy --bootstrap
    ```
    This will automatically:
-   - Generate all configurations.
-   - Upload them to your VPS via SCP.
-   - Start WireGuard and Traefik on your VPS via SSH.
+   - **Bootstrap**: Update system, install Docker/WireGuard, and configure UFW Firewall.
+   - **Provision**: Generate configurations and upload them to your VPS.
+   - **Launch**: Start WireGuard and Traefik containers on the remote host.
 
 4. **Connect your Home Server**
    ```bash
@@ -41,18 +42,27 @@ Automate exposing your home server behind CGNAT/4G through a VPS with a public I
    docker compose up -d
    ```
 
-## Workflow
-1. User → `api.example.com` (VPS)
-2. Traefik (VPS) → WireGuard Tunnel (`10.0.0.2`)
-3. Home Server Service (`10.0.0.2:3000`)
+## Service Management
+Manage your home services effortlessly via CLI:
+- `add [domain] [port]`: Add a new routing rule.
+- `remove [domain]`: Delete an existing service.
+- `list`: View all active services.
+
+Example:
+```bash
+./wg-gateway service add api.example.com 3000
+./wg-gateway service remove old.example.com
+```
 
 ## Commands
-- `init`: Initialize a new project and generate keys.
-- `add-service [domain] [port]`: Register a new home service.
-- `generate`: Render Docker and WireGuard configurations.
-- `status`: Show current configuration.
-- `rotate-keys`: Regenerate all WireGuard keys.
-- `destroy`: Remove generated deployment files.
+- `init`: Initialize project with defaults or flags.
+- `service`: Manage home services (add, remove, list).
+- `deploy`: One-click deployment to VPS (with optional `--bootstrap`).
+- `config`: Update specific configuration keys.
+- `status`: Health check and configuration overview.
+- `generate`: Manually render configuration files.
+- `rotate-keys`: Securely cycle WireGuard keys.
+- `destroy`: Clean up 'deploy' directory.
 
 ## Contributing
 Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on how to get involved.

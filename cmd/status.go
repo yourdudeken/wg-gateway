@@ -13,18 +13,34 @@ var statusCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		cfg, err := config.LoadConfig("config.yaml")
 		if err != nil {
-			fmt.Printf("Error loading config: %v\n", err)
+			fmt.Printf("❌ Error loading config: %v\n", err)
 			return
 		}
 
-		fmt.Printf("Project: %s\n", cfg.Project)
-		fmt.Printf("VPS IP:  %s (WG: %s)\n", cfg.VPS.IP, cfg.VPS.WGIp)
-		fmt.Printf("Home WG IP: %s\n", cfg.Home.WGIp)
-		fmt.Printf("Proxy:   %s (%s)\n", cfg.Proxy.Type, cfg.Proxy.Email)
-		fmt.Printf("Services (%d):\n", len(cfg.Services))
-		for _, s := range cfg.Services {
-			fmt.Printf("  - %s: %s -> localhost:%d\n", s.Name, s.Domain, s.Port)
+		fmt.Println("📊 W-G Gateway Status")
+		fmt.Println("======================")
+		fmt.Printf("Project:    %s\n", cfg.Project)
+		fmt.Printf("VPS IP:     %s (User: %s)\n", cfg.VPS.IP, cfg.VPS.SSHUser)
+		fmt.Printf("Audit:      ")
+		if err := cfg.Validate(); err != nil {
+			fmt.Printf("⚠️  Incomplete: %v\n", err)
+		} else {
+			fmt.Println("✅ Production Ready")
 		}
+		
+		fmt.Println("\n🌐 Networking")
+		fmt.Printf("  Tunnel IP (VPS):  %s\n", cfg.VPS.WGIp)
+		fmt.Printf("  Tunnel IP (Home): %s\n", cfg.Home.WGIp)
+		
+		fmt.Println("\n🛠️  Services")
+		if len(cfg.Services) == 0 {
+			fmt.Println("  No services configured.")
+		} else {
+			for i, s := range cfg.Services {
+				fmt.Printf("  %d. %s -> 10.0.0.2:%d\n", i+1, s.Domain, s.Port)
+			}
+		}
+		fmt.Println("======================")
 	},
 }
 
