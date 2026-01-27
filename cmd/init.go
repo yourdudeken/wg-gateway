@@ -9,6 +9,12 @@ import (
 	"github.com/yourdudeken/wg-gateway/internal/wg"
 )
 
+var (
+	vpsIP      string
+	sshUser    string
+	proxyEmail string
+)
+
 var initCmd = &cobra.Command{
 	Use:   "init",
 	Short: "Initialize a new project",
@@ -20,6 +26,16 @@ var initCmd = &cobra.Command{
 		}
 
 		cfg := config.NewDefaultConfig()
+
+		if vpsIP != "" {
+			cfg.VPS.IP = vpsIP
+		}
+		if sshUser != "" {
+			cfg.VPS.SSHUser = sshUser
+		}
+		if proxyEmail != "" {
+			cfg.Proxy.Email = proxyEmail
+		}
 
 		vpsKeys, err := wg.GenerateKeyPair()
 		if err != nil {
@@ -43,10 +59,16 @@ var initCmd = &cobra.Command{
 			return
 		}
 
-		fmt.Println("Project initialized. Please edit config.yaml to set your VPS IP and services.")
+		fmt.Println("Project initialized successfully.")
+		if cfg.VPS.IP == "" {
+			fmt.Println("Note: You still need to set your VPS IP using 'wg-gateway config vps.ip <ip>'")
+		}
 	},
 }
 
 func init() {
+	initCmd.Flags().StringVar(&vpsIP, "ip", "", "VPS Public IP address")
+	initCmd.Flags().StringVar(&sshUser, "user", "root", "VPS SSH user")
+	initCmd.Flags().StringVar(&proxyEmail, "email", "", "Email for Let's Encrypt certificates")
 	rootCmd.AddCommand(initCmd)
 }
