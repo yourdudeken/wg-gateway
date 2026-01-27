@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  wireguard:
+    image: lscr.io/linuxserver/wireguard:latest
+    container_name: wireguard
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+    volumes:
+      - ./wireguard:/config
+      - /lib/modules:/lib/modules
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+    restart: unless-stopped
+
+  # HOW TO ADD YOUR SERVICES:
+  # 1. Add your service below
+  # 2. Use 'network_mode: "service:wireguard"'
+  # 3. Traefik on the VPS will now be able to reach your service at http://{{.Home.WGIp}}:<your-port>
+  
+  # Example Service:
+  # app1:
+  #   image: nginxdemos/hello
+  #   network_mode: "service:wireguard"
+  #   restart: unless-stopped

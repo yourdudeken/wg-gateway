@@ -1,0 +1,23 @@
+# Binaries
+bin/
+wg-gateway
+
+# Config
+config.yaml
+
+# Generated Deployment Files
+deploy/
+
+# Docker/Proxy data (if run locally)
+letsencrypt/
+wireguard/
+traefik_dynamic/
+
+# OS files
+.DS_Store
+
+# Go
+vendor/
+*.exe
+*.test
+*.prof

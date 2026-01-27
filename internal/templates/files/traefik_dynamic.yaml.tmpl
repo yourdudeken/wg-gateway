@@ -1,0 +1,19 @@
+http:
+  routers:
+{{range .Services}}
+    {{.Name}}-router:
+      rule: "Host(`{{.Domain}}`)"
+      entryPoints:
+        - "websecure"
+      service: "{{.Name}}-service"
+      tls:
+        certResolver: "myresolver"
+{{end}}
+
+  services:
+{{range .Services}}
+    {{.Name}}-service:
+      loadBalancer:
+        servers:
+          - url: "http://{{$.Home.WGIp}}:{{.Port}}"
+{{end}}

@@ -1,0 +1,9 @@
+[Interface]
+Address = {{.VPS.WGIp}}/24
+ListenPort = 51820
+PrivateKey = {{.VPS.PrivateKey}}
+
+[Peer]
+PublicKey = {{.Home.PublicKey}}
+AllowedIPs = {{.Home.WGIp}}/32
+PersistentKeepalive = {{.Home.Keepalive}}
