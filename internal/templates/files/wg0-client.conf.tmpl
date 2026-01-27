@@ -1,9 +1,9 @@
 [Interface]
-Address = {{.Home.WGIp}}/24
-PrivateKey = {{.Home.PrivateKey}}
+Address = {{.Peer.WGIp}}/24
+PrivateKey = {{.Peer.PrivateKey}}
 
 [Peer]
 PublicKey = {{.VPS.PublicKey}}
 Endpoint = {{.VPS.IP}}:{{.VPS.WGPort}}
 AllowedIPs = {{.VPS.WGIp}}/32
-PersistentKeepalive = {{.Home.Keepalive}}
+PersistentKeepalive = {{.Peer.Keepalive}}

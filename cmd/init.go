@@ -49,13 +49,14 @@ var initCmd = &cobra.Command{
 		cfg.VPS.PrivateKey = vpsKeys.Private
 		cfg.VPS.PublicKey = vpsKeys.Public
 
+		// Initialize first peer
 		homeKeys, err := wg.GenerateKeyPair()
 		if err != nil {
-			fmt.Printf("Error generating Home keys: %v\n", err)
+			fmt.Printf("Error generating peer keys: %v\n", err)
 			return
 		}
-		cfg.Home.PrivateKey = homeKeys.Private
-		cfg.Home.PublicKey = homeKeys.Public
+		cfg.Peers[0].PrivateKey = homeKeys.Private
+		cfg.Peers[0].PublicKey = homeKeys.Public
 
 		err = config.SaveConfig(configPath, cfg)
 		if err != nil {

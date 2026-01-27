@@ -37,9 +37,12 @@ func NewDefaultConfig() *Config {
 			WGPort: 51820,
 			WGIp:   "10.0.0.1",
 		},
-		Home: HomeConfig{
-			WGIp:      "10.0.0.2",
-			Keepalive: 25,
+		Peers: []PeerConfig{
+			{
+				Name:      "home",
+				WGIp:      "10.0.0.2",
+				Keepalive: 25,
+			},
 		},
 		Proxy: ProxyConfig{
 			Type: "traefik",

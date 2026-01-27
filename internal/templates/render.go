@@ -4,11 +4,9 @@ import (
 	"bytes"
 	"path/filepath"
 	"text/template"
-
-	"github.com/yourdudeken/wg-gateway/internal/config"
 )
 
-func Render(templateName string, cfg *config.Config) ([]byte, error) {
+func Render(templateName string, data interface{}) ([]byte, error) {
 	tmplData, err := Templates.ReadFile(filepath.Join("files", templateName))
 	if err != nil {
 		return nil, err
@@ -20,7 +18,7 @@ func Render(templateName string, cfg *config.Config) ([]byte, error) {
 	}
 
 	var buf bytes.Buffer
-	err = tmpl.Execute(&buf, cfg)
+	err = tmpl.Execute(&buf, data)
 	if err != nil {
 		return nil, err
 	}

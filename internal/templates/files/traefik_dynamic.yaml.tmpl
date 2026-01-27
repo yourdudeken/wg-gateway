@@ -1,19 +1,25 @@
 http:
   routers:
-{{range .Services}}
-    {{.Name}}-router:
-      rule: "Host(`{{.Domain}}`)"
+{{range $service := .Services}}
+    {{$service.Name}}-router:
+      rule: "Host(`{{$service.Domain}}`)"
       entryPoints:
         - "websecure"
-      service: "{{.Name}}-service"
+      service: "{{$service.Name}}-service"
       tls:
         certResolver: "myresolver"
 {{end}}
 
   services:
-{{range .Services}}
-    {{.Name}}-service:
+{{range $service := .Services}}
+    {{$service.Name}}-service:
       loadBalancer:
         servers:
-          - url: "http://{{$.Home.WGIp}}:{{.Port}}"
+          {{$found := false}}
+          {{range $.Peers}}
+            {{if eq .Name $service.PeerName}}
+          - url: "http://{{.WGIp}}:{{$service.Port}}"
+              {{$found = true}}
+            {{end}}
+          {{end}}
 {{end}}

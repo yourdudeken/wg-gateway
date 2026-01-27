@@ -3,7 +3,10 @@ Address = {{.VPS.WGIp}}/24
 ListenPort = 51820
 PrivateKey = {{.VPS.PrivateKey}}
 
+{{range .Peers}}
+# Peer: {{.Name}}
 [Peer]
-PublicKey = {{.Home.PublicKey}}
-AllowedIPs = {{.Home.WGIp}}/32
-PersistentKeepalive = {{.Home.Keepalive}}
+PublicKey = {{.PublicKey}}
+AllowedIPs = {{.WGIp}}/32
+PersistentKeepalive = {{.Keepalive}}
+{{end}}

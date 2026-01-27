@@ -30,14 +30,21 @@ var statusCmd = &cobra.Command{
 		
 		fmt.Println("\nNetworking")
 		fmt.Printf("  Tunnel IP (VPS):  %s\n", cfg.VPS.WGIp)
-		fmt.Printf("  Tunnel IP (Home): %s\n", cfg.Home.WGIp)
+		fmt.Println("\nPeers:")
+		if len(cfg.Peers) == 0 {
+			fmt.Println("  No peers configured.")
+		} else {
+			for _, p := range cfg.Peers {
+				fmt.Printf("  - %s: %s\n", p.Name, p.WGIp)
+			}
+		}
 		
 		fmt.Println("\nServices")
 		if len(cfg.Services) == 0 {
 			fmt.Println("  No services configured.")
 		} else {
 			for i, s := range cfg.Services {
-				fmt.Printf("  %d. %s -> 10.0.0.2:%d\n", i+1, s.Domain, s.Port)
+				fmt.Printf("  %d. %s -> %s (Peer: %s)\n", i+1, s.Domain, "localhost", s.PeerName)
 			}
 		}
 		fmt.Println("======================")

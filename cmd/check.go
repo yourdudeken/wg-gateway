@@ -28,16 +28,13 @@ var checkCmd = &cobra.Command{
 		fmt.Println("Health Check: VPS Connection")
 		fmt.Println("---------------------------")
 		
-		// 1. Check SSH Connectivity
 		fmt.Print("SSH Connectivity: ")
 		if err := client.Run("true"); err != nil {
 			fmt.Println("FAILED")
-			fmt.Printf("Error: %v\n", err)
 			return
 		}
 		fmt.Println("OK")
 
-		// 2. Check Docker
 		fmt.Print("Docker Engine:   ")
 		if err := client.Run("docker info > /dev/null 2>&1"); err != nil {
 			fmt.Println("FAILED")
@@ -45,7 +42,6 @@ var checkCmd = &cobra.Command{
 			fmt.Println("OK")
 		}
 
-		// 3. Check WireGuard Interface
 		fmt.Print("WireGuard (wg0): ")
 		if err := client.Run("ip addr show wg0 > /dev/null 2>&1"); err != nil {
 			fmt.Println("DOWN")
@@ -53,19 +49,14 @@ var checkCmd = &cobra.Command{
 			fmt.Println("UP")
 		}
 
-		// 4. Check Handshake
-		fmt.Print("Tunnel Status:   ")
-		// We catch output to check handshake
-		// Note: We need a way to capture output from client.Run or create a new method
-		fmt.Println("Checking...")
-		client.Run("sudo wg show wg0")
-
-		// 5. Ping Home from VPS
-		fmt.Printf("Ping Home (%s): ", cfg.Home.WGIp)
-		if err := client.Run(fmt.Sprintf("ping -c 3 -W 2 %s > /dev/null 2>&1", cfg.Home.WGIp)); err != nil {
-			fmt.Println("UNREACHABLE")
-		} else {
-			fmt.Println("REACHABLE")
+		fmt.Println("\nPeer Connectivity:")
+		for _, peer := range cfg.Peers {
+			fmt.Printf("  - Peer %s (%s): ", peer.Name, peer.WGIp)
+			if err := client.Run(fmt.Sprintf("ping -c 2 -W 1 %s > /dev/null 2>&1", peer.WGIp)); err != nil {
+				fmt.Println("UNREACHABLE")
+			} else {
+				fmt.Println("REACHABLE")
+			}
 		}
 		
 		fmt.Println("---------------------------")

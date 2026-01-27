@@ -9,6 +9,10 @@ import (
 	"github.com/yourdudeken/wg-gateway/internal/service"
 )
 
+var (
+	targetPeer string
+)
+
 var serviceCmd = &cobra.Command{
 	Use:   "service",
 	Short: "Manage home services",
@@ -33,10 +37,10 @@ var addSvcCmd = &cobra.Command{
 			return
 		}
 
-		// Use domain as name if not specified (could add a flag for name later)
-		name := domain 
+		// Use domain as name if not specified
+		name := domain
 
-		if err := service.Add(cfg, name, domain, port); err != nil {
+		if err := service.Add(cfg, name, domain, port, targetPeer); err != nil {
 			fmt.Printf("Error: %v\n", err)
 			return
 		}
@@ -46,9 +50,11 @@ var addSvcCmd = &cobra.Command{
 			return
 		}
 
-		fmt.Printf("Service %s added successfully.\n", domain)
+		fmt.Printf("Service %s added successfully to peer %s.\n", domain, targetPeer)
 	},
 }
+
+// ... rest of commands ...
 
 var removeSvcCmd = &cobra.Command{
 	Use:   "remove [domain]",
@@ -94,12 +100,13 @@ var listSvcCmd = &cobra.Command{
 
 		fmt.Println("Current Services:")
 		for _, s := range cfg.Services {
-			fmt.Printf("  - %s -> localhost:%d\n", s.Domain, s.Port)
+			fmt.Printf("  - %s -> %s:%d (Peer: %s)\n", s.Domain, "localhost", s.Port, s.PeerName)
 		}
 	},
 }
 
 func init() {
+	addSvcCmd.Flags().StringVar(&targetPeer, "peer", "home", "Target peer name for the service")
 	serviceCmd.AddCommand(addSvcCmd)
 	serviceCmd.AddCommand(removeSvcCmd)
 	serviceCmd.AddCommand(listSvcCmd)

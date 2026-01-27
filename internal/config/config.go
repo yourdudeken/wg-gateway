@@ -1,11 +1,11 @@
 package config
 
 type Config struct {
-	Project string   `yaml:"project"`
-	VPS     VPSConfig `yaml:"vps"`
-	Home    HomeConfig `yaml:"home"`
-	Proxy   ProxyConfig `yaml:"proxy"`
-	Services []Service `yaml:"services"`
+	Project  string        `yaml:"project"`
+	VPS      VPSConfig     `yaml:"vps"`
+	Peers    []PeerConfig  `yaml:"peers"`
+	Proxy    ProxyConfig   `yaml:"proxy"`
+	Services []Service     `yaml:"services"`
 }
 
 type VPSConfig struct {
@@ -18,7 +18,8 @@ type VPSConfig struct {
 	PublicKey  string `yaml:"public_key"`
 }
 
-type HomeConfig struct {
+type PeerConfig struct {
+	Name       string `yaml:"name"`
 	WGIp       string `yaml:"wg_ip"`
 	Keepalive  int    `yaml:"keepalive"`
 	PrivateKey string `yaml:"private_key"`
@@ -31,7 +32,8 @@ type ProxyConfig struct {
 }
 
 type Service struct {
-	Name   string `yaml:"name"`
-	Domain string `yaml:"domain"`
-	Port   int    `yaml:"port"`
+	Name     string `yaml:"name"`
+	Domain   string `yaml:"domain"`
+	Port     int    `yaml:"port"`
+	PeerName string `yaml:"peer_name"`
 }

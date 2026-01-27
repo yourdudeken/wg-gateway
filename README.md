@@ -42,11 +42,22 @@ Automate exposing your home server behind CGNAT/4G through a VPS with a public I
    docker compose up -d
    ```
 
+## Peer Management (Multi-Node)
+The tool supports a **Hub-and-Spoke** topology, allowing one VPS to serve multiple home servers.
+- `peer add [name]`: Add a new home server peer.
+- `peer list`: View all configured peers/branches.
+
+Example:
+```bash
+./wg-gateway peer add warehouse-lab
+./wg-gateway service add lab-api.com 8080 --peer warehouse-lab
+```
+
 ## Service Management
 Manage your home services effortlessly via CLI:
-- `add [domain] [port]`: Add a new routing rule.
+- `add [domain] [port] [--peer name]`: Add a new routing rule (defaults to 'home').
 - `remove [domain]`: Delete an existing service.
-- `list`: View all active services.
+- `list`: View all active services and their associated peers.
 
 Example:
 ```bash
@@ -56,12 +67,13 @@ Example:
 
 ## Observability
 Keep an eye on your gateway's health with built-in monitoring:
-- `check`: Tests SSH, Docker, WireGuard interfaces, and pings the home server from the VPS.
+- `check`: Connectivity test for VPS and **all** connected peers.
 - `logs vps traefik`: Streams logs from the Traefik proxy on your VPS.
-- `logs home`: Views logs for your home-side WireGuard container.
+- `logs home`: Views logs for your 'home' peer WireGuard container.
 
 ## Commands
 - `init`: Initialize project with defaults or flags.
+- `peer`: Manage home server peers (add, list).
 - `service`: Manage home services (add, remove, list).
 - `deploy`: One-click deployment to VPS (with optional `--bootstrap`).
 - `config`: Update specific configuration keys.

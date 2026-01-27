@@ -6,17 +6,30 @@ import (
 	"github.com/yourdudeken/wg-gateway/internal/config"
 )
 
-func Add(cfg *config.Config, name, domain string, port int) error {
+func Add(cfg *config.Config, name, domain string, port int, peerName string) error {
 	for _, s := range cfg.Services {
 		if s.Domain == domain {
 			return fmt.Errorf("service with domain %s already exists", domain)
 		}
 	}
 
+	// Verify peer exists
+	peerExists := false
+	for _, p := range cfg.Peers {
+		if p.Name == peerName {
+			peerExists = true
+			break
+		}
+	}
+	if !peerExists {
+		return fmt.Errorf("peer %s not found", peerName)
+	}
+
 	cfg.Services = append(cfg.Services, config.Service{
-		Name:   name,
-		Domain: domain,
-		Port:   port,
+		Name:     name,
+		Domain:   domain,
+		Port:     port,
+		PeerName: peerName,
 	})
 	return nil
 }
