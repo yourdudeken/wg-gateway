@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>W-G Gateway - Dashboard</title>
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
+
 <body>
     <div class="container">
         <header class="header">
@@ -23,28 +25,28 @@
             <!-- Stats Cards -->
             <div class="stats-grid">
                 <div class="stat-card">
-                    <div class="stat-icon">🖥️</div>
+                    <div class="stat-icon">[P]</div>
                     <div class="stat-content">
                         <h3 id="peerCount">0</h3>
                         <p>Active Peers</p>
                     </div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon">🌐</div>
+                    <div class="stat-icon">[S]</div>
                     <div class="stat-content">
                         <h3 id="serviceCount">0</h3>
                         <p>Services</p>
                     </div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon">📡</div>
+                    <div class="stat-icon">[V]</div>
                     <div class="stat-content">
                         <h3 id="vpsIP">-</h3>
                         <p>VPS IP</p>
                     </div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon">✓</div>
+                    <div class="stat-icon">[OK]</div>
                     <div class="stat-content">
                         <h3 id="readyStatus">-</h3>
                         <p>Status</p>
@@ -159,7 +161,8 @@
                     </select>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" onclick="closeModal('addServiceModal')">Cancel</button>
+                    <button type="button" class="btn btn-secondary"
+                        onclick="closeModal('addServiceModal')">Cancel</button>
                     <button type="submit" class="btn btn-primary">Add Service</button>
                 </div>
             </form>
@@ -168,4 +171,5 @@
 
     <script src="/static/js/app.js"></script>
 </body>
+
 </html>
