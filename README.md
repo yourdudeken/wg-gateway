@@ -65,6 +65,25 @@ Launch the secure tunnel on your local machine.
 
 ---
 
+## Web UI Dashboard
+
+For users who prefer a graphical interface, `wg-gateway` includes a modern web-based dashboard:
+
+```bash
+./wg-gateway web --port 8080
+```
+
+Then open `http://localhost:8080` in your browser.
+
+### Dashboard Features
+- Real-time status monitoring with live statistics
+- Visual peer and service management
+- Configuration editor with form validation
+- Dark-themed, responsive design
+- No emojis - clean professional interface
+
+---
+
 ## Command Reference
 
 ### Infrastructure Lifecycle
@@ -83,6 +102,7 @@ Launch the secure tunnel on your local machine.
 ### Local Execution
 - `up [peer]`: Start the WireGuard tunnel for a specific peer.
 - `down [peer]`: Stop the tunnel for a specific peer.
+- `web [--port]`: Launch the web-based dashboard interface.
 
 ### Observability & Maintenance
 - `status`: Overview of the project, including a production-readiness audit.
