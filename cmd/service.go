@@ -23,13 +23,13 @@ var addSvcCmd = &cobra.Command{
 		port, _ := strconv.Atoi(args[1])
 
 		if err := service.Validate(domain, port); err != nil {
-			fmt.Printf("❌ Validation error: %v\n", err)
+			fmt.Printf("Validation error: %v\n", err)
 			return
 		}
 
 		cfg, err := config.LoadConfig("config.yaml")
 		if err != nil {
-			fmt.Printf("❌ Error loading config: %v\n", err)
+			fmt.Printf("Error loading config: %v\n", err)
 			return
 		}
 
@@ -37,16 +37,16 @@ var addSvcCmd = &cobra.Command{
 		name := domain 
 
 		if err := service.Add(cfg, name, domain, port); err != nil {
-			fmt.Printf("❌ Error: %v\n", err)
+			fmt.Printf("Error: %v\n", err)
 			return
 		}
 
 		if err := config.SaveConfig("config.yaml", cfg); err != nil {
-			fmt.Printf("❌ Error saving config: %v\n", err)
+			fmt.Printf("Error saving config: %v\n", err)
 			return
 		}
 
-		fmt.Printf("✅ Service %s added successfully.\n", domain)
+		fmt.Printf("Service %s added successfully.\n", domain)
 	},
 }
 
@@ -59,21 +59,21 @@ var removeSvcCmd = &cobra.Command{
 
 		cfg, err := config.LoadConfig("config.yaml")
 		if err != nil {
-			fmt.Printf("❌ Error loading config: %v\n", err)
+			fmt.Printf("Error loading config: %v\n", err)
 			return
 		}
 
 		if err := service.Remove(cfg, domain); err != nil {
-			fmt.Printf("❌ Error: %v\n", err)
+			fmt.Printf("Error: %v\n", err)
 			return
 		}
 
 		if err := config.SaveConfig("config.yaml", cfg); err != nil {
-			fmt.Printf("❌ Error saving config: %v\n", err)
+			fmt.Printf("Error saving config: %v\n", err)
 			return
 		}
 
-		fmt.Printf("✅ Service %s removed successfully.\n", domain)
+		fmt.Printf("Service %s removed successfully.\n", domain)
 	},
 }
 
@@ -83,7 +83,7 @@ var listSvcCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		cfg, err := config.LoadConfig("config.yaml")
 		if err != nil {
-			fmt.Printf("❌ Error loading config: %v\n", err)
+			fmt.Printf("Error loading config: %v\n", err)
 			return
 		}
 

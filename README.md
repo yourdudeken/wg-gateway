@@ -21,7 +21,7 @@ Automate exposing your home server behind CGNAT/4G through a VPS with a public I
 
 2. **Add your services**
    ```bash
-   ./wg-gateway add-service myapp.com 8080
+   ./wg-gateway service add myapp.com 8080
    ```
 
 3. **Deploy to VPS (Automated)**

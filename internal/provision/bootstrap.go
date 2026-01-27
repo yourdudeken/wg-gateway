@@ -6,7 +6,7 @@ import (
 )
 
 func Bootstrap(client *ssh.Client) error {
-	fmt.Println("🚀 Starting VPS Provisioning...")
+	fmt.Println("Starting VPS Provisioning...")
 
 	commands := []struct {
 		desc string
@@ -20,12 +20,12 @@ func Bootstrap(client *ssh.Client) error {
 	}
 
 	for _, c := range commands {
-		fmt.Printf("📦 %s...\n", c.desc)
+		fmt.Printf("[%s]...\n", c.desc)
 		if err := client.Run(c.cmd); err != nil {
 			return fmt.Errorf("failed during '%s': %w", c.desc, err)
 		}
 	}
 
-	fmt.Println("✅ VPS Provisioning Complete!")
+	fmt.Println("VPS Provisioning Complete!")
 	return nil
 }

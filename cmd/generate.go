@@ -16,12 +16,12 @@ var generateCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		cfg, err := config.LoadConfig("config.yaml")
 		if err != nil {
-			fmt.Printf("❌ Error loading config: %v\n", err)
+			fmt.Printf("Error loading config: %v\n", err)
 			return
 		}
 
 		if err := cfg.Validate(); err != nil {
-			fmt.Printf("⚠️  Config Validation Warning: %v\n", err)
+			fmt.Printf("Config Validation Warning: %v\n", err)
 		}
 
 		generateAction(cfg)
@@ -39,15 +39,15 @@ func generateAction(cfg *config.Config) {
 	os.MkdirAll(filepath.Join(vpsDir, "letsencrypt"), 0755)
 
 	if err := renderAndSave(vpsDir, "docker-compose.vps.yaml.tmpl", "docker-compose.yaml", cfg); err != nil {
-		fmt.Printf("❌ Error: %v\n", err)
+		fmt.Printf("Error: %v\n", err)
 		return
 	}
 	if err := renderAndSave(filepath.Join(vpsDir, "wireguard"), "wg0-server.conf.tmpl", "wg0.conf", cfg); err != nil {
-		fmt.Printf("❌ Error: %v\n", err)
+		fmt.Printf("Error: %v\n", err)
 		return
 	}
 	if err := renderAndSave(filepath.Join(vpsDir, "traefik_dynamic"), "traefik_dynamic.yaml.tmpl", "dynamic.yaml", cfg); err != nil {
-		fmt.Printf("❌ Error: %v\n", err)
+		fmt.Printf("Error: %v\n", err)
 		return
 	}
 
@@ -56,15 +56,15 @@ func generateAction(cfg *config.Config) {
 	os.MkdirAll(filepath.Join(homeDir, "wireguard"), 0755)
 
 	if err := renderAndSave(homeDir, "docker-compose.home.yaml.tmpl", "docker-compose.yaml", cfg); err != nil {
-		fmt.Printf("❌ Error: %v\n", err)
+		fmt.Printf("Error: %v\n", err)
 		return
 	}
 	if err := renderAndSave(filepath.Join(homeDir, "wireguard"), "wg0-client.conf.tmpl", "wg0.conf", cfg); err != nil {
-		fmt.Printf("❌ Error: %v\n", err)
+		fmt.Printf("Error: %v\n", err)
 		return
 	}
 
-	fmt.Println("✨ Success! Deployment files generated in 'deploy/'")
+	fmt.Println("Success! Deployment files generated in 'deploy/'")
 }
 
 func renderAndSave(dir, tmplName, fileName string, cfg *config.Config) error {
