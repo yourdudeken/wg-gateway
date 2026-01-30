@@ -90,7 +90,7 @@ wg-gateway up home
 
 ## Advanced Management
 
-### 📊 Proactive Monitoring & Alerts
+### Proactive Monitoring & Alerts
 The tool can run in "Watcher" mode to monitor the health of your VPS, tunnels, and services. Configure alerts via Discord or Telegram.
 
 ```bash
@@ -103,7 +103,7 @@ wg-gateway config monitor.interval 10
 wg-gateway monitor
 ```
 
-### 💾 Automated Backups
+### Automated Backups
 Protect your configuration and SSL certificates from data loss.
 
 ```bash
@@ -115,7 +115,7 @@ wg-gateway backup
 ```
 *Note: This zips your local `config.yaml` and fetches the `letsencrypt/acme.json` file from your VPS.*
 
-### 🌍 Multi-Hub Contexts
+### Multi-Hub Contexts
 Manage multiple independent VPS gateways (e.g., US and Europe) using the `-c` flag.
 
 ```bash
@@ -126,7 +126,7 @@ wg-gateway hub list
 wg-gateway -c europe.yaml status
 ```
 
-### 🖥️ Web UI Dashboard
+### Web UI Dashboard
 A modern, password-protected graphical interface for managing your gateway.
 
 ```bash
