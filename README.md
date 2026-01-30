@@ -35,7 +35,7 @@ Build the CLI tool and initialize your project with VPS details.
 ```bash
 go build -o wg-gateway main.go
 
-./wg-gateway init --ip 1.2.3.4 --user root --key ~/.ssh/id_rsa --email admin@example.com
+./wg-gateway init --ip 1.2.3.4 --user root --key ~/.ssh/id_ed25519 --email admin@example.com
 ```
 
 ### 2. Manage Peers (Nodes)
