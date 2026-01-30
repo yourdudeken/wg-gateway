@@ -17,27 +17,50 @@ var content embed.FS
 
 type Server struct {
 	configPath string
+	password   string
 }
 
-func NewServer(configPath string) *Server {
-	return &Server{configPath: configPath}
+func NewServer(configPath, password string) *Server {
+	return &Server{
+		configPath: configPath,
+		password:   password,
+	}
+}
+
+func (s *Server) authMiddleware(next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if s.password == "" {
+			next(w, r)
+			return
+		}
+
+		user, pass, ok := r.BasicAuth()
+		if !ok || user != "admin" || pass != s.password {
+			w.Header().Set("WWW-Authenticate", `Basic realm="W-G Gateway Dashboard"`)
+			http.Error(w, "Unauthorized", http.StatusUnauthorized)
+			return
+		}
+
+		next(w, r)
+	}
 }
 
 func (s *Server) Start(port int) error {
-	http.HandleFunc("/", s.handleIndex)
-	http.HandleFunc("/api/status", s.handleStatus)
-	http.HandleFunc("/api/peers", s.handlePeers)
-	http.HandleFunc("/api/peers/add", s.handleAddPeer)
-	http.HandleFunc("/api/services", s.handleServices)
-	http.HandleFunc("/api/services/add", s.handleAddService)
-	http.HandleFunc("/api/services/delete", s.handleDeleteService)
-	http.HandleFunc("/api/config", s.handleConfig)
-	http.HandleFunc("/api/config/update", s.handleUpdateConfig)
+	http.HandleFunc("/", s.authMiddleware(s.handleIndex))
+	http.HandleFunc("/api/status", s.authMiddleware(s.handleStatus))
+	http.HandleFunc("/api/peers", s.authMiddleware(s.handlePeers))
+	http.HandleFunc("/api/peers/add", s.authMiddleware(s.handleAddPeer))
+	http.HandleFunc("/api/services", s.authMiddleware(s.handleServices))
+	http.HandleFunc("/api/services/add", s.authMiddleware(s.handleAddService))
+	http.HandleFunc("/api/services/delete", s.authMiddleware(s.handleDeleteService))
+	http.HandleFunc("/api/config", s.authMiddleware(s.handleConfig))
+	http.HandleFunc("/api/config/update", s.authMiddleware(s.handleUpdateConfig))
 
-	http.Handle("/static/", http.FileServer(http.FS(content)))
+	http.Handle("/static/", s.authMiddleware(func(w http.ResponseWriter, r *http.Request) {
+		http.FileServer(http.FS(content)).ServeHTTP(w, r)
+	}))
 
 	addr := fmt.Sprintf(":%d", port)
-	fmt.Printf("Web UI available at http://localhost%s\n", addr)
 	return http.ListenAndServe(addr, nil)
 }
 

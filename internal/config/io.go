@@ -47,5 +47,8 @@ func NewDefaultConfig() *Config {
 		Proxy: ProxyConfig{
 			Type: "traefik",
 		},
+		Monitor: MonitorConfig{
+			Interval: 5,
+		},
 	}
 }

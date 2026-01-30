@@ -4,6 +4,7 @@ All notable changes to the `wg-gateway` project will be documented in this file.
 
 ## [2.2.0] - 2026-01-31
 ### Added
+- **Web UI Authentication (Basic Auth)**: Secure the dashboard with a password using the `--password` flag or `WG_ADMIN_PASS` environment variable.
 - **Zero-Setup DNS (sslip.io)**: Automatically map hostnames to the VPS IP for users without custom domains.
 - **Local Setup Engine**: New `setup` command to automate local environment configuration.
     - Automated UFW firewall rule injection (`sudo ufw allow in on wg0`)
