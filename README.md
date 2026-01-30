@@ -21,7 +21,7 @@
 *   **No File Editing**: All configurations are handled via the CLI.
 *   **Hub-and-Spoke**: One VPS can securely tunnel to multiple distributed home server nodes.
 *   **Zero-Setup DNS**: Built-in `sslip.io` support for those without a domain.
-*   **Security First**: Automated hardening with Fail2Ban, UFW, and custom SSH identity support.
+*   **Security First**: Automated hardening with Fail2Ban, UFW, and context-aware authentication.
 
 ---
 
@@ -29,39 +29,25 @@
 
 *   **Automated VPS Provisioning**: One command to transform a fresh Ubuntu VPS into a secured gateway.
 *   **Multi-Node Support**: Connect multiple home servers (peers) to a single VPS hub.
-*   **Observability Suite**: Real-time health checks, handshakes, and container log streaming.
-*   **Docker Native**: Runs entirely in containers for isolation and easy cleanup.
-*   **Auto-HTTPS**: Integrated Let's Encrypt support via Traefik.
-*   **Emoji-Free**: Clean, professional interface for developers.
+*   **Observability Suite**: Real-time health checks, Handshake auditing, and centralized log streaming.
+*   **Proactive Monitoring**: Background monitoring with Discord and Telegram webhook alerts.
+*   **Automated Backups**: Snapshot your configuration and Let's Encrypt certificates to local storage or S3.
+*   **Service Templates**: One-click configuration for Plex, Home Assistant, Jellyfin, and more.
+*   **Multi-Hub Support**: Manage multiple gateway environments (contexts) from a single CLI.
 
 ---
 
----
+## Installation
 
-## Installation Options
-
-Choose the method that best fits your environment.
-
-### 1. The One-Liner (Recommended for most users)
-This script automatically detects your OS and architecture, downloads the latest binary, and installs it to your system.
+### The One-Liner (Recommended)
+This script detects your OS and architecture, downloads the latest release, and installs it to your path.
 ```bash
 curl -sSfL https://raw.githubusercontent.com/yourdudeken/wg-gateway/main/scripts/install.sh | sh
 ```
 
-### 2. For Go Developers
-If you have Go installed, you can install the tool directly from source:
+### Manual Installation (Go)
 ```bash
 go install github.com/yourdudeken/wg-gateway@latest
-```
-
-### 3. Manual Build (From Source)
-If you prefer to build it manually:
-```bash
-git clone https://github.com/yourdudeken/wg-gateway.git
-cd wg-gateway
-
-go build -o wg-gateway main.go
-sudo ln -sf $(pwd)/wg-gateway /usr/local/bin/wg-gateway
 ```
 
 ---
@@ -75,17 +61,17 @@ wg-gateway init --ip 1.2.3.4 --user root --key ~/.ssh/id_ed25519 --email admin@e
 wg-gateway setup
 ```
 
-### 2. Manage Peers (Nodes)
-Add your home server nodes. Each peer receives a unique WireGuard configuration.
+### 2. Add a Peer (Node)
+Add your home server node. providing a unique name.
 ```bash
 wg-gateway peer add warehouse-lab
 ```
 
-### 3. Add Services (Zero-Setup DNS)
-Route domains to your peers. If you do not have a domain, use the built-in sslip.io support. Providing a hostname without a dot automatically maps it to your VPS IP.
+### 3. Add Services
+Route domains to your peers. Use built-in templates for common apps.
 ```bash
-wg-gateway service add dash 8080 --peer home
-# Result: dash.1.2.3.4.sslip.io (No DNS configuration required)
+wg-gateway service add-template plex myplex
+# Result: myplex.1.2.3.4.sslip.io -> Local Port 32400
 ```
 
 ### 4. Deploy to VPS
@@ -102,55 +88,78 @@ wg-gateway up home
 
 ---
 
-## Web UI Dashboard
+## Advanced Management
 
-For users who prefer a graphical interface, `wg-gateway` includes a modern web-based dashboard:
+### 📊 Proactive Monitoring & Alerts
+The tool can run in "Watcher" mode to monitor the health of your VPS, tunnels, and services. Configure alerts via Discord or Telegram.
 
 ```bash
-wg-gateway web --port 8080 --password MySecurePass
+# Configure alerts
+wg-gateway config monitor.discord.url "https://discord.com/api/webhooks/..."
+wg-gateway config monitor.discord.enabled true
+wg-gateway config monitor.interval 10
+
+# Start the monitor
+wg-gateway monitor
 ```
-*Note: You can also set the `WG_ADMIN_PASS` environment variable instead of using the flag.*
 
-Once started, the dashboard is available at `http://localhost:8080` (Username: `admin`).
+### 💾 Automated Backups
+Protect your configuration and SSL certificates from data loss.
 
-### Security Note
-If a password is provided, the dashboard is protected by Basic Authentication. If no password is provided, the dashboard is public—only use this mode in trusted local environments.
+```bash
+# Set backup location
+wg-gateway config backup.local_path ./backups
+
+# Run backup
+wg-gateway backup
+```
+*Note: This zips your local `config.yaml` and fetches the `letsencrypt/acme.json` file from your VPS.*
+
+### 🌍 Multi-Hub Contexts
+Manage multiple independent VPS gateways (e.g., US and Europe) using the `-c` flag.
+
+```bash
+# List all hub contexts
+wg-gateway hub list
+
+# Switch context for a specific command
+wg-gateway -c europe.yaml status
+```
+
+### 🖥️ Web UI Dashboard
+A modern, password-protected graphical interface for managing your gateway.
+
+```bash
+wg-gateway web --password MySecurePass
+```
+Username: `admin` | Default Port: `8080`
 
 ---
 
 ## Command Reference
 
-### System & Local Setup
-*   `setup`: Configure the local firewall (UFW) and verify system readiness.
-*   `init`: Create a new project configuration.
-*   `hub list`: List all available gateway contexts (YAML configurations).
+### System & Setup
+| Command | Description |
+|---------|-------------|
+| `setup` | Configures local UFW and verifies system readiness |
+| `init` | Creates a new gateway configuration file |
+| `hub list` | Lists all available gateway contexts |
 
-> **Note**: Use the `-c` or `--config` global flag to switch between different hub configurations (e.g., `wg-gateway -c europe.yaml status`).
+### Infrastructure
+| Command | Description |
+|---------|-------------|
+| `deploy` | Provisions VPS and syncs configurations (`--bootstrap` for fresh VPS) |
+| `status` | Checks production readiness and project overview |
+| `check` | Live connectivity audit (Ping peers, check ports) |
+| `logs` | Stream logs from VPS or any Home peer |
 
-### Infrastructure Lifecycle
-*   `deploy [--bootstrap]`: Provision VPS, install Docker/WireGuard, and upload configs.
-*   `generate`: Manually render the deployment Docker and WireGuard files.
-*   `destroy`: Wipe the local `deploy/` directory.
-
-### Node & Service Management
-*   `peer add [name]`: Register a new home server node.
-*   `peer list`: View all configured nodes and their tunnel IPs.
-*   `service add [domain] [port]`: Map a domain to a local port (Supports sslip.io).
-*   `service add-template [name] [prefix]`: Add a service using pre-configured app standards (e.g., plex, ha).
-*   `service update [domain] [port]`: Change the target port for a domain.
-*   `service list`: View all active routing rules.
-
-### Local Execution
-*   `up [peer]`: Start the WireGuard tunnel for a specific peer.
-*   `down [peer]`: Stop the tunnel for a specific peer.
-*   `web [--port]`: Launch the web-based dashboard interface.
-
-### Observability & Maintenance
-*   `status`: Overview of the project, including a production-readiness audit.
-*   `check`: Live connectivity test (pings all peers and checks service ports).
-*   `logs [vps|peer_name]`: Stream real-time logs from remote or local containers.
-*   `config [key] [value]`: Update any setting (e.g., `vps.ip`, `proxy.email`) via CLI.
-*   `rotate-keys`: Regenerate all WireGuard keypairs for the hub and spokes.
+### Services & Peers
+| Command | Description |
+|---------|-------------|
+| `peer add` | Register a new home server node |
+| `service add` | Map a domain to a local port (Supports sslip.io) |
+| `service add-template`| Add a service with pre-configured app defaults |
+| `rotate-keys` | Regenerate all WireGuard keypairs for the project |
 
 ---
 
@@ -159,8 +168,8 @@ If a password is provided, the dashboard is protected by Basic Authentication. I
 `wg-gateway` implements several hardening measures automatically:
 *   **Fail2Ban**: Installed and configured during bootstrap to block brute-force attacks.
 *   **UFW Firewall**: Defaults to "deny all" with explicit allows for SSH (22), WireGuard (51820), and Web (80/443).
-*   **Custom SSH Keys**: Supports specific identity files for deployment.
-*   **Internal Networking**: Services are bridged via a private WireGuard network, never exposed directly on the VPS host.
+*   **Basic Auth**: The Web Dashboard is protected by Basic Authentication (Username: `admin`).
+*   **Encapsulated Networking**: Internal services are never exposed to the VPS host network; they communicate strictly over the encrypted `wg0` interface.
 
 ---
 

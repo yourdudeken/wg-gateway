@@ -10,7 +10,11 @@ description: Build and install the wg-gateway tool locally
    ```bash
    go build -o wg-gateway main.go
    ```
-3. Install to your local bin (optional)
+3. Global installation (Option A: Symlink)
    ```bash
-   sudo mv wg-gateway /usr/local/bin/
+   sudo ln -sf $(pwd)/wg-gateway /usr/local/bin/wg-gateway
+   ```
+4. Verify the build
+   ```bash
+   wg-gateway hub list
    ```
