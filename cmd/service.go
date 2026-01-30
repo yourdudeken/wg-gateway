@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/spf13/cobra"
 	"github.com/yourdudeken/wg-gateway/internal/config"
@@ -26,14 +27,19 @@ var addSvcCmd = &cobra.Command{
 		domain := args[0]
 		port, _ := strconv.Atoi(args[1])
 
-		if err := service.Validate(domain, port); err != nil {
-			fmt.Printf("Validation error: %v\n", err)
-			return
-		}
-
 		cfg, err := config.LoadConfig("config.yaml")
 		if err != nil {
 			fmt.Printf("Error loading config: %v\n", err)
+			return
+		}
+
+		// If domain doesn't contain a dot, assume it's a prefix and use sslip.io
+		if !strings.Contains(domain, ".") {
+			domain = fmt.Sprintf("%s.%s.sslip.io", domain, cfg.VPS.IP)
+		}
+
+		if err := service.Validate(domain, port); err != nil {
+			fmt.Printf("Validation error: %v\n", err)
 			return
 		}
 

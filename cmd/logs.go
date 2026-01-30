@@ -30,10 +30,8 @@ var logsCmd = &cobra.Command{
 
 		if target == "vps" {
 			viewVPSLogs(cfg, service)
-		} else if target == "home" {
-			viewHomeLogs(service)
 		} else {
-			fmt.Println("Invalid target. Use 'vps' or 'home'.")
+			viewHomeLogs(cfg, target)
 		}
 	},
 }
@@ -63,26 +61,21 @@ func viewVPSLogs(cfg *config.Config, service string) {
 	}
 }
 
-func viewHomeLogs(service string) {
-	// For home logs, we assume the user is running this on the home server 
-	// or we just run docker compose logs in the deploy/home directory
-	fmt.Println("Viewing local (home) logs...")
+func viewHomeLogs(cfg *config.Config, target string) {
+	fmt.Printf("Viewing logs for peer '%s'...\n", target)
 	
 	args := []string{"compose", "logs"}
 	if followFlag {
 		args = append(args, "-f")
 	}
-	if service != "" {
-		args = append(args, service)
-	}
 
 	cmd := exec.Command("docker", args...)
-	cmd.Dir = "deploy/home"
+	cmd.Dir = fmt.Sprintf("deploy/peers/%s", target)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin
 	if err := cmd.Run(); err != nil {
-		fmt.Printf("Error viewing local logs: %v\n", err)
+		fmt.Printf("Error viewing logs: %v\n", err)
 	}
 }
 

@@ -1,21 +1,14 @@
-version: '3.8'
-
 services:
   wireguard:
     image: lscr.io/linuxserver/wireguard:latest
     container_name: wireguard
+    network_mode: host
     cap_add:
       - NET_ADMIN
       - SYS_MODULE
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Etc/UTC
     volumes:
       - ./wireguard:/config
       - /lib/modules:/lib/modules
-    sysctls:
-      - net.ipv4.conf.all.src_valid_mark=1
     restart: unless-stopped
 
   # HOW TO ADD YOUR SERVICES:

@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   wireguard:
     image: lscr.io/linuxserver/wireguard:latest
@@ -24,14 +22,15 @@ services:
     restart: unless-stopped
 
   traefik:
-    image: traefik:v2.10
+    image: traefik:v3.1
     container_name: traefik
     network_mode: "service:wireguard"
     command:
+      - "--log.level=DEBUG"
       - "--api.insecure=false"
-      - "--providers.docker=true"
-      - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.web.address=:80"
+      - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
       - "--entrypoints.websecure.address=:443"
       - "--certificatesresolvers.myresolver.acme.httpchallenge=true"
       - "--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web"
@@ -40,7 +39,6 @@ services:
       - "--providers.file.directory=/etc/traefik/dynamic"
       - "--providers.file.watch=true"
     volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - "./letsencrypt:/letsencrypt"
       - "./traefik_dynamic:/etc/traefik/dynamic"
     restart: unless-stopped

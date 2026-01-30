@@ -4,6 +4,7 @@ http:
     {{$service.Name}}-router:
       rule: "Host(`{{$service.Domain}}`)"
       entryPoints:
+        - "web"
         - "websecure"
       service: "{{$service.Name}}-service"
       tls:
