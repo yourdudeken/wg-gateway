@@ -45,7 +45,7 @@ Choose the method that best fits your environment.
 ### 1. The One-Liner (Recommended for most users)
 This script automatically detects your OS and architecture, downloads the latest binary, and installs it to your system.
 ```bash
-curl -sSfL https://wg-gateway.yourdudeken.com/install.sh | sh
+curl -sSfL https://raw.githubusercontent.com/yourdudeken/wg-gateway/main/scripts/install.sh | sh
 ```
 
 ### 2. For Go Developers
