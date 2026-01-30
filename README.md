@@ -36,10 +36,26 @@
 
 ---
 
-## Quick Start (6-Step Workflow)
+---
 
-### 1. Preparation & Installation
-Clone the repository, compile the tool, and install it to your system path.
+## Installation Options
+
+Choose the method that best fits your environment.
+
+### 1. The One-Liner (Recommended for most users)
+This script automatically detects your OS and architecture, downloads the latest binary, and installs it to your system.
+```bash
+curl -sSfL https://wg-gateway.yourdudeken.com/install.sh | sh
+```
+
+### 2. For Go Developers
+If you have Go installed, you can install the tool directly from source:
+```bash
+go install github.com/yourdudeken/wg-gateway@latest
+```
+
+### 3. Manual Build (From Source)
+If you prefer to build it manually:
 ```bash
 git clone https://github.com/yourdudeken/wg-gateway.git
 cd wg-gateway
@@ -48,33 +64,37 @@ go build -o wg-gateway main.go
 sudo ln -sf $(pwd)/wg-gateway /usr/local/bin/wg-gateway
 ```
 
-### 2. Initialize & Setup
+---
+
+## Quick Start (5-Step Workflow)
+
+### 1. Initialize & Setup
 Initialize your project and run the setup command to configure your local firewall (UFW) to allow tunnel traffic.
 ```bash
 wg-gateway init --ip 1.2.3.4 --user root --key ~/.ssh/id_ed25519 --email admin@example.com
 wg-gateway setup
 ```
 
-### 3. Manage Peers (Nodes)
+### 2. Manage Peers (Nodes)
 Add your home server nodes. Each peer receives a unique WireGuard configuration.
 ```bash
 wg-gateway peer add warehouse-lab
 ```
 
-### 4. Add Services (Zero-Setup DNS)
+### 3. Add Services (Zero-Setup DNS)
 Route domains to your peers. If you do not have a domain, use the built-in sslip.io support. Providing a hostname without a dot automatically maps it to your VPS IP.
 ```bash
 wg-gateway service add dash 8080 --peer home
 # Result: dash.1.2.3.4.sslip.io (No DNS configuration required)
 ```
 
-### 5. Deploy to VPS
+### 4. Deploy to VPS
 Bootstrap the remote server and sync configurations.
 ```bash
 wg-gateway deploy --bootstrap
 ```
 
-### 6. Start the Tunnel
+### 5. Start the Tunnel
 Launch the secure tunnel on your local machine.
 ```bash
 wg-gateway up home
