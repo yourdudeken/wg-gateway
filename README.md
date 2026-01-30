@@ -28,9 +28,15 @@
 
 ---
 
-## Quick Start (5-Step Workflow)
+## Quick Start (6-Step Workflow)
 
-### 1. Build & Initialize
+### 1. Clone the Repository
+```bash
+git clone https://github.com/yourdudeken/wg-gateway.git
+cd wg-gateway
+```
+
+### 2. Build & Initialize
 Build the CLI tool and initialize your project with VPS details.
 ```bash
 go build -o wg-gateway main.go
@@ -38,26 +44,26 @@ go build -o wg-gateway main.go
 ./wg-gateway init --ip 1.2.3.4 --user root --key ~/.ssh/id_ed25519 --email admin@example.com
 ```
 
-### 2. Manage Peers (Nodes)
+### 3. Manage Peers (Nodes)
 Add your home server nodes. The first peer 'home' is created by default.
 ```bash
 ./wg-gateway peer add warehouse-lab
 ```
 
-### 3. Add Services
+### 4. Add Services
 Route public domains to specific ports on your peers.
 ```bash
 ./wg-gateway service add myapp.com 8080 --peer home
 ./wg-gateway service add inventory.net 9000 --peer warehouse-lab
 ```
 
-### 4. Deploy to VPS
+### 5. Deploy to VPS
 Bootstrap the remote server (first time only) and sync configurations.
 ```bash
 ./wg-gateway deploy --bootstrap
 ```
 
-### 5. Start the Tunnel
+### 6. Start the Tunnel
 Launch the secure tunnel on your local machine.
 ```bash
 ./wg-gateway up home
