@@ -33,6 +33,8 @@ func Execute() {
 	}
 }
 
+var ConfigFile string
+
 func init() {
-	// Root flags
+	rootCmd.PersistentFlags().StringVarP(&ConfigFile, "config", "c", "config.yaml", "Path to config file")
 }

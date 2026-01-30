@@ -2,16 +2,26 @@
 
 All notable changes to the `wg-gateway` project will be documented in this file.
 
+## [2.2.1] - 2026-01-31
+### Fixed
+- **CI/CD Permissions**: Fixed missing `contents: write` permissions in Release workflow preventing automatic tagging.
+
 ## [2.2.0] - 2026-01-31
 ### Added
-- **Web UI Authentication (Basic Auth)**: Secure the dashboard with a password using the `--password` flag or `WG_ADMIN_PASS` environment variable.
-- **Zero-Setup DNS (sslip.io)**: Automatically map hostnames to the VPS IP for users without custom domains.
-- **Local Setup Engine**: New `setup` command to automate local environment configuration.
-    - Automated UFW firewall rule injection (`sudo ufw allow in on wg0`)
-    - Docker daemon health verification
-    - Global installation path generator
-- **Enhanced Log Filtering**: Improved `logs` command to support peer-specific log streaming using the new distributed generation architecture.
-- **Improved Health Auditing**: The `check` command now performs deep-packet verification of service port connectivity from the VPS hub.
+- **Proactive Monitoring**: New `monitor` command with background auditing and real-time alerts.
+    - Discord Webhook integration
+    - Telegram Bot integration
+    - VPS, Peer, and Service port health polling
+- **Automated Backups**: New `backup` command for disaster recovery.
+    - Zips local `config.yaml` and remote Let's Encrypt certificates
+    - Supports local storage and S3-compatible buckets (AWS, R2)
+- **Web UI Authentication (Basic Auth)**: Dashboard security using the `--password` flag or `WG_ADMIN_PASS` environment variable.
+- **Multi-Hub Support (Contexts)**: Use the `-c` or `--config` flag to manage multiple independent gateways from the same CLI.
+- **Service Templates**: One-click configuration for popular apps (Plex, Home Assistant, Jellyfin, Pi-hole, etc.).
+- **Zero-Setup DNS (sslip.io)**: Automated hostname mapping to VPS IP for users without custom domains.
+- **Local Setup Engine**: New `setup` command to automate local environment preparation (UFW config, Docker verification).
+- **Improved Health Auditing**: Deep-packet verification of service connectivity in the `check` command.
+- **Enhanced Log Filtering**: Peer-specific log streaming and improved remote log orchestration.
 
 ## [2.1.0] - 2026-01-27
 ### Added

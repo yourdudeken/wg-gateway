@@ -18,6 +18,9 @@ on:
         default: 'patch'
         required: true
 
+permissions:
+  contents: write
+
 jobs:
   auto-tag:
     name: Auto-Tag and Version

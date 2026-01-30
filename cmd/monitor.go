@@ -18,7 +18,7 @@ var monitorCmd = &cobra.Command{
 - Service port responsiveness
 And sends alerts via Discord or Telegram if anomalies are detected.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		cfg, err := config.LoadConfig("config.yaml")
+		cfg, err := config.LoadConfig(ConfigFile)
 		if err != nil {
 			log.Fatalf("Error loading config: %v", err)
 		}

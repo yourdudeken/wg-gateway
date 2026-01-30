@@ -20,9 +20,8 @@ var initCmd = &cobra.Command{
 	Use:   "init",
 	Short: "Initialize a new project",
 	Run: func(cmd *cobra.Command, args []string) {
-		configPath := "config.yaml"
-		if _, err := os.Stat(configPath); err == nil {
-			fmt.Println("Config file already exists.")
+		if _, err := os.Stat(ConfigFile); err == nil {
+			fmt.Printf("Config file '%s' already exists.\n", ConfigFile)
 			return
 		}
 
@@ -58,15 +57,15 @@ var initCmd = &cobra.Command{
 		cfg.Peers[0].PrivateKey = homeKeys.Private
 		cfg.Peers[0].PublicKey = homeKeys.Public
 
-		err = config.SaveConfig(configPath, cfg)
+		err = config.SaveConfig(ConfigFile, cfg)
 		if err != nil {
 			fmt.Printf("Error saving config: %v\n", err)
 			return
 		}
 
-		fmt.Println("Project initialized successfully.")
+		fmt.Printf("Project initialized successfully at %s\n", ConfigFile)
 		if cfg.VPS.IP == "" {
-			fmt.Println("Note: You still need to set your VPS IP using 'wg-gateway config vps.ip <ip>'")
+			fmt.Printf("Note: You still need to set your VPS IP using 'wg-gateway -c %s config vps.ip <ip>'\n", ConfigFile)
 		}
 	},
 }

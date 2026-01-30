@@ -25,7 +25,7 @@ var addPeerCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		name := args[0]
 
-		cfg, err := config.LoadConfig("config.yaml")
+		cfg, err := config.LoadConfig(ConfigFile)
 		if err != nil {
 			fmt.Printf("Error loading config: %v\n", err)
 			return
@@ -73,7 +73,7 @@ var addPeerCmd = &cobra.Command{
 			PublicKey:  keys.Public,
 		})
 
-		if err := config.SaveConfig("config.yaml", cfg); err != nil {
+		if err := config.SaveConfig(ConfigFile, cfg); err != nil {
 			fmt.Printf("Error saving config: %v\n", err)
 			return
 		}
@@ -87,7 +87,7 @@ var listPeerCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List all peers",
 	Run: func(cmd *cobra.Command, args []string) {
-		cfg, err := config.LoadConfig("config.yaml")
+		cfg, err := config.LoadConfig(ConfigFile)
 		if err != nil {
 			fmt.Printf("Error loading config: %v\n", err)
 			return

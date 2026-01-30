@@ -43,3 +43,17 @@ func (c *Client) Copy(src, dst string) error {
 	cmd.Stderr = os.Stderr
 	return cmd.Run()
 }
+
+func (c *Client) Fetch(src, dst string) error {
+	remote := fmt.Sprintf("%s@%s:%s", c.User, c.Host, src)
+	args := []string{"-o", "BatchMode=yes", "-o", "ConnectTimeout=10", "-r"}
+	if c.KeyPath != "" {
+		args = append(args, "-i", c.KeyPath)
+	}
+	args = append(args, remote, dst)
+
+	cmd := exec.Command("scp", args...)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	return cmd.Run()
+}

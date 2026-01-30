@@ -12,7 +12,7 @@ var checkCmd = &cobra.Command{
 	Use:   "check",
 	Short: "Check the health and status of the gateway",
 	Run: func(cmd *cobra.Command, args []string) {
-		cfg, err := config.LoadConfig("config.yaml")
+		cfg, err := config.LoadConfig(ConfigFile)
 		if err != nil {
 			fmt.Printf("Error loading config: %v\n", err)
 			return
