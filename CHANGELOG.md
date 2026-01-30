@@ -2,6 +2,16 @@
 
 All notable changes to the `wg-gateway` project will be documented in this file.
 
+## [2.2.0] - 2026-01-31
+### Added
+- **Zero-Setup DNS (sslip.io)**: Automatically map hostnames to the VPS IP for users without custom domains.
+- **Local Setup Engine**: New `setup` command to automate local environment configuration.
+    - Automated UFW firewall rule injection (`sudo ufw allow in on wg0`)
+    - Docker daemon health verification
+    - Global installation path generator
+- **Enhanced Log Filtering**: Improved `logs` command to support peer-specific log streaming using the new distributed generation architecture.
+- **Improved Health Auditing**: The `check` command now performs deep-packet verification of service port connectivity from the VPS hub.
+
 ## [2.1.0] - 2026-01-27
 ### Added
 - **Web UI Dashboard**: Modern, dark-themed web interface for visual gateway management.

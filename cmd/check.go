@@ -58,6 +58,23 @@ var checkCmd = &cobra.Command{
 				fmt.Println("REACHABLE")
 			}
 		}
+
+		fmt.Println("\nService Connectivity:")
+		for _, svc := range cfg.Services {
+			var peer config.PeerConfig
+			for _, p := range cfg.Peers {
+				if p.Name == svc.PeerName {
+					peer = p
+					break
+				}
+			}
+			fmt.Printf("  - %s (%s:%d): ", svc.Domain, peer.WGIp, svc.Port)
+			if err := client.Run(fmt.Sprintf("docker exec wireguard nc -z -w 3 %s %d > /dev/null 2>&1", peer.WGIp, svc.Port)); err != nil {
+				fmt.Println("TIMEOUT (Check local firewall)")
+			} else {
+				fmt.Println("OK")
+			}
+		}
 		
 		fmt.Println("---------------------------")
 	},
