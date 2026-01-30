@@ -15,7 +15,7 @@ var deployCmd = &cobra.Command{
 	Use:   "deploy",
 	Short: "Automate VPS setup and deployment",
 	Run: func(cmd *cobra.Command, args []string) {
-		cfg, err := config.LoadConfig("config.yaml")
+		cfg, err := config.LoadConfig(ConfigFile)
 		if err != nil {
 			fmt.Printf("Error loading config: %v\n", err)
 			return

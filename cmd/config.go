@@ -19,13 +19,15 @@ Examples:
   wg-gateway config project my-gateway
   wg-gateway config monitor.interval 10
   wg-gateway config monitor.discord.url https://discord.com/api/webhooks/...
-  wg-gateway config monitor.discord.enabled true`,
+  wg-gateway config monitor.discord.enabled true
+  wg-gateway config backup.local_path ./backups
+  wg-gateway config backup.s3.bucket my-backups`,
 	Args:  cobra.ExactArgs(2),
 	Run: func(cmd *cobra.Command, args []string) {
 		key := args[0]
 		value := args[1]
 
-		cfg, err := config.LoadConfig("config.yaml")
+		cfg, err := config.LoadConfig(ConfigFile)
 		if err != nil {
 			fmt.Printf("Error loading config: %v\n", err)
 			return
@@ -88,6 +90,24 @@ Examples:
 				case "enabled": cfg.Monitor.Telegram.Enabled = (value == "true")
 				}
 			}
+		case "backup":
+			if len(parts) < 2 {
+				fmt.Println("Invalid key. Use backup.local_path, backup.s3.bucket, etc.")
+				return
+			}
+			switch parts[1] {
+			case "local_path":
+				cfg.Backup.LocalPath = value
+			case "s3":
+				if len(parts) < 3 { return }
+				switch parts[2] {
+				case "enabled": cfg.Backup.S3.Enabled = (value == "true")
+				case "endpoint": cfg.Backup.S3.Endpoint = value
+				case "bucket": cfg.Backup.S3.Bucket = value
+				case "access_key": cfg.Backup.S3.AccessKey = value
+				case "secret_key": cfg.Backup.S3.SecretKey = value
+				}
+			}
 		case "project":
 			cfg.Project = value
 		default:
@@ -95,7 +115,7 @@ Examples:
 			return
 		}
 
-		err = config.SaveConfig("config.yaml", cfg)
+		err = config.SaveConfig(ConfigFile, cfg)
 		if err != nil {
 			fmt.Printf("Error saving config: %v\n", err)
 			return

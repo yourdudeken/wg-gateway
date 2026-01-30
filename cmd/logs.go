@@ -22,7 +22,7 @@ var logsCmd = &cobra.Command{
 			service = args[1]
 		}
 
-		cfg, err := config.LoadConfig("config.yaml")
+		cfg, err := config.LoadConfig(ConfigFile)
 		if err != nil {
 			fmt.Printf("Error loading config: %v\n", err)
 			return

@@ -27,7 +27,7 @@ var addSvcCmd = &cobra.Command{
 		domain := args[0]
 		port, _ := strconv.Atoi(args[1])
 
-		cfg, err := config.LoadConfig("config.yaml")
+		cfg, err := config.LoadConfig(ConfigFile)
 		if err != nil {
 			fmt.Printf("Error loading config: %v\n", err)
 			return
@@ -51,7 +51,7 @@ var addSvcCmd = &cobra.Command{
 			return
 		}
 
-		if err := config.SaveConfig("config.yaml", cfg); err != nil {
+		if err := config.SaveConfig(ConfigFile, cfg); err != nil {
 			fmt.Printf("Error saving config: %v\n", err)
 			return
 		}
@@ -68,7 +68,7 @@ var updateSvcCmd = &cobra.Command{
 		domain := args[0]
 		newPort, _ := strconv.Atoi(args[1])
 
-		cfg, err := config.LoadConfig("config.yaml")
+		cfg, err := config.LoadConfig(ConfigFile)
 		if err != nil {
 			fmt.Printf("Error loading config: %v\n", err)
 			return
@@ -79,7 +79,7 @@ var updateSvcCmd = &cobra.Command{
 			return
 		}
 
-		if err := config.SaveConfig("config.yaml", cfg); err != nil {
+		if err := config.SaveConfig(ConfigFile, cfg); err != nil {
 			fmt.Printf("Error saving config: %v\n", err)
 			return
 		}
@@ -95,7 +95,7 @@ var removeSvcCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		domain := args[0]
 
-		cfg, err := config.LoadConfig("config.yaml")
+		cfg, err := config.LoadConfig(ConfigFile)
 		if err != nil {
 			fmt.Printf("Error loading config: %v\n", err)
 			return
@@ -106,7 +106,7 @@ var removeSvcCmd = &cobra.Command{
 			return
 		}
 
-		if err := config.SaveConfig("config.yaml", cfg); err != nil {
+		if err := config.SaveConfig(ConfigFile, cfg); err != nil {
 			fmt.Printf("Error saving config: %v\n", err)
 			return
 		}
@@ -119,7 +119,7 @@ var listSvcCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List all services",
 	Run: func(cmd *cobra.Command, args []string) {
-		cfg, err := config.LoadConfig("config.yaml")
+		cfg, err := config.LoadConfig(ConfigFile)
 		if err != nil {
 			fmt.Printf("Error loading config: %v\n", err)
 			return
@@ -137,11 +137,55 @@ var listSvcCmd = &cobra.Command{
 	},
 }
 
+var addTemplateCmd = &cobra.Command{
+	Use:   "add-template [template-name] [domain-prefix]",
+	Short: "Add a new service using a pre-configured template",
+	Long: `Available templates: plex, ha, jellyfin, pihole, grafana, prometheus, overseerr, tautulli.
+Example: wg-gateway service add-template plex myplex`,
+	Args: cobra.ExactArgs(2),
+	Run: func(cmd *cobra.Command, args []string) {
+		tmplName := strings.ToLower(args[0])
+		prefix := args[1]
+
+		tmpl, ok := service.Templates[tmplName]
+		if !ok {
+			fmt.Printf("Error: Template '%s' not found.\n", tmplName)
+			return
+		}
+
+		cfg, err := config.LoadConfig(ConfigFile)
+		if err != nil {
+			fmt.Printf("Error loading config: %v\n", err)
+			return
+		}
+
+		// Auto-generate domain if it's just a prefix
+		domain := prefix
+		if !strings.Contains(domain, ".") {
+			domain = fmt.Sprintf("%s.%s.sslip.io", prefix, cfg.VPS.IP)
+		}
+
+		if err := service.Add(cfg, domain, domain, tmpl.Port, targetPeer); err != nil {
+			fmt.Printf("Error: %v\n", err)
+			return
+		}
+
+		if err := config.SaveConfig(ConfigFile, cfg); err != nil {
+			fmt.Printf("Error saving config: %v\n", err)
+			return
+		}
+
+		fmt.Printf("Template '%s' applied: Service %s added to peer %s on port %d.\n", tmplName, domain, targetPeer, tmpl.Port)
+	},
+}
+
 func init() {
 	addSvcCmd.Flags().StringVar(&targetPeer, "peer", "home", "Target peer name for the service")
+	addTemplateCmd.Flags().StringVar(&targetPeer, "peer", "home", "Target peer name for the service")
 	serviceCmd.AddCommand(addSvcCmd)
 	serviceCmd.AddCommand(updateSvcCmd)
 	serviceCmd.AddCommand(removeSvcCmd)
 	serviceCmd.AddCommand(listSvcCmd)
+	serviceCmd.AddCommand(addTemplateCmd)
 	rootCmd.AddCommand(serviceCmd)
 }

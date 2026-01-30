@@ -22,7 +22,7 @@ var webCmd = &cobra.Command{
 			webPassword = envPass
 		}
 
-		server := web.NewServer("config.yaml", webPassword)
+		server := web.NewServer(ConfigFile, webPassword)
 		
 		fmt.Printf("Starting W-G Gateway Web UI...\n")
 		fmt.Printf("Dashboard: http://localhost:%d\n", webPort)

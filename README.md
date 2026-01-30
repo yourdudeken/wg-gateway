@@ -123,6 +123,9 @@ If a password is provided, the dashboard is protected by Basic Authentication. I
 ### System & Local Setup
 *   `setup`: Configure the local firewall (UFW) and verify system readiness.
 *   `init`: Create a new project configuration.
+*   `hub list`: List all available gateway contexts (YAML configurations).
+
+> **Note**: Use the `-c` or `--config` global flag to switch between different hub configurations (e.g., `wg-gateway -c europe.yaml status`).
 
 ### Infrastructure Lifecycle
 *   `deploy [--bootstrap]`: Provision VPS, install Docker/WireGuard, and upload configs.
@@ -133,6 +136,7 @@ If a password is provided, the dashboard is protected by Basic Authentication. I
 *   `peer add [name]`: Register a new home server node.
 *   `peer list`: View all configured nodes and their tunnel IPs.
 *   `service add [domain] [port]`: Map a domain to a local port (Supports sslip.io).
+*   `service add-template [name] [prefix]`: Add a service using pre-configured app standards (e.g., plex, ha).
 *   `service update [domain] [port]`: Change the target port for a domain.
 *   `service list`: View all active routing rules.
 

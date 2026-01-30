@@ -7,12 +7,27 @@ type Config struct {
 	Proxy    ProxyConfig   `yaml:"proxy"`
 	Services []Service     `yaml:"services"`
 	Monitor  MonitorConfig `yaml:"monitor"`
+	Backup   BackupConfig  `yaml:"backup"`
 }
 
 type MonitorConfig struct {
 	Interval int           `yaml:"interval"` // in minutes
 	Discord  WebHookConfig `yaml:"discord"`
 	Telegram WebHookConfig `yaml:"telegram"`
+}
+
+type BackupConfig struct {
+	LocalPath string   `yaml:"local_path"`
+	S3        S3Config `yaml:"s3"`
+}
+
+type S3Config struct {
+	Enabled   bool   `yaml:"enabled"`
+	Endpoint  string `yaml:"endpoint"`
+	Region    string `yaml:"region"`
+	Bucket    string `yaml:"bucket"`
+	AccessKey string `yaml:"access_key"`
+	SecretKey string `yaml:"secret_key"`
 }
 
 type WebHookConfig struct {
