@@ -16,7 +16,10 @@ Examples:
   wg-gateway config vps.ip 1.2.3.4
   wg-gateway config vps.user root
   wg-gateway config proxy.email admin@domain.com
-  wg-gateway config project my-gateway`,
+  wg-gateway config project my-gateway
+  wg-gateway config monitor.interval 10
+  wg-gateway config monitor.discord.url https://discord.com/api/webhooks/...
+  wg-gateway config monitor.discord.enabled true`,
 	Args:  cobra.ExactArgs(2),
 	Run: func(cmd *cobra.Command, args []string) {
 		key := args[0]
@@ -62,6 +65,28 @@ Examples:
 			default:
 				fmt.Printf("Unknown Proxy config: %s\n", parts[1])
 				return
+			}
+		case "monitor":
+			if len(parts) < 2 {
+				fmt.Println("Invalid key. Use monitor.interval, monitor.discord.url, etc.")
+				return
+			}
+			switch parts[1] {
+			case "interval":
+				fmt.Sscanf(value, "%d", &cfg.Monitor.Interval)
+			case "discord":
+				if len(parts) < 3 { return }
+				switch parts[2] {
+				case "url": cfg.Monitor.Discord.URL = value
+				case "enabled": cfg.Monitor.Discord.Enabled = (value == "true")
+				}
+			case "telegram":
+				if len(parts) < 3 { return }
+				switch parts[2] {
+				case "token": cfg.Monitor.Telegram.Token = value
+				case "chat_id": cfg.Monitor.Telegram.ChatID = value
+				case "enabled": cfg.Monitor.Telegram.Enabled = (value == "true")
+				}
 			}
 		case "project":
 			cfg.Project = value

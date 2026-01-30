@@ -107,10 +107,14 @@ wg-gateway up home
 For users who prefer a graphical interface, `wg-gateway` includes a modern web-based dashboard:
 
 ```bash
-wg-gateway web --port 8080
+wg-gateway web --port 8080 --password MySecurePass
 ```
+*Note: You can also set the `WG_ADMIN_PASS` environment variable instead of using the flag.*
 
-Once started, the dashboard is available at `http://localhost:8080`.
+Once started, the dashboard is available at `http://localhost:8080` (Username: `admin`).
+
+### Security Note
+If a password is provided, the dashboard is protected by Basic Authentication. If no password is provided, the dashboard is public—only use this mode in trusted local environments.
 
 ---
 

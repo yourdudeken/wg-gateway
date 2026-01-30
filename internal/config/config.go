@@ -6,6 +6,20 @@ type Config struct {
 	Peers    []PeerConfig  `yaml:"peers"`
 	Proxy    ProxyConfig   `yaml:"proxy"`
 	Services []Service     `yaml:"services"`
+	Monitor  MonitorConfig `yaml:"monitor"`
+}
+
+type MonitorConfig struct {
+	Interval int           `yaml:"interval"` // in minutes
+	Discord  WebHookConfig `yaml:"discord"`
+	Telegram WebHookConfig `yaml:"telegram"`
+}
+
+type WebHookConfig struct {
+	Enabled bool   `yaml:"enabled"`
+	URL     string `yaml:"url"`
+	Token   string `yaml:"token"`   // for telegram
+	ChatID  string `yaml:"chat_id"` // for telegram
 }
 
 type VPSConfig struct {
