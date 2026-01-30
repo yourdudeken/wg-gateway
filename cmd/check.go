@@ -43,7 +43,7 @@ var checkCmd = &cobra.Command{
 		}
 
 		fmt.Print("WireGuard (wg0): ")
-		if err := client.Run("ip addr show wg0 > /dev/null 2>&1"); err != nil {
+		if err := client.Run("docker exec wireguard ip addr show wg0 > /dev/null 2>&1"); err != nil {
 			fmt.Println("DOWN")
 		} else {
 			fmt.Println("UP")
@@ -52,7 +52,7 @@ var checkCmd = &cobra.Command{
 		fmt.Println("\nPeer Connectivity:")
 		for _, peer := range cfg.Peers {
 			fmt.Printf("  - Peer %s (%s): ", peer.Name, peer.WGIp)
-			if err := client.Run(fmt.Sprintf("ping -c 2 -W 1 %s > /dev/null 2>&1", peer.WGIp)); err != nil {
+			if err := client.Run(fmt.Sprintf("docker exec wireguard ping -c 2 -W 1 %s > /dev/null 2>&1", peer.WGIp)); err != nil {
 				fmt.Println("UNREACHABLE")
 			} else {
 				fmt.Println("REACHABLE")
